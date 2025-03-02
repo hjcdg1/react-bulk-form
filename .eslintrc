@@ -1,0 +1,20 @@
+{
+  "extends": ["airbnb", "airbnb-typescript", "plugin:prettier/recommended"],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "overrides": [
+    {
+      "files": ["esbuild.mjs"],
+      "parser": "espree",
+      "parserOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      }
+    }
+  ],
+  "rules": {
+    "import/prefer-default-export": "off",
+    "@typescript-eslint/naming-convention": "off"
+  }
+}

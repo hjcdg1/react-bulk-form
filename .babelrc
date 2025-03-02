@@ -1,0 +1,33 @@
+{
+  "presets": ["@babel/preset-typescript", "@babel/preset-react"],
+  "env": {
+    "esmodule": {
+      "presets": [
+        [
+          "@babel/preset-env",
+          {
+            // Don't transform ES module syntax.
+            "modules": false,
+
+            // Target browsers supporting ES module syntax.
+            "targets": { "esmodules": true }
+          }
+        ]
+      ]
+    },
+    "commonjs": {
+      "presets": [
+        [
+          "@babel/preset-env",
+          {
+            // Transform ES module syntax to CommonJS.
+            "modules": "commonjs",
+
+            // Target Node.js 16.
+            "targets": { "node": 16 }
+          }
+        ]
+      ]
+    }
+  }
+} 

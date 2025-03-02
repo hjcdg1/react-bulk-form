@@ -1,0 +1,26 @@
+{
+    // IDE 자체에 내장된 TypeScript가 아닌 프로젝트 내에 설치된 버전의 TypeScript를 사용하도록 설정
+    "typescript.tsdk": "node_modules/typescript/lib",
+
+    // ESLint Fix를 Default Formatter로 설정
+    "eslint.format.enable": true,
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "[typescript]": {
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
+    "[javascript.mjs]": {
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
+
+    // 파일 저장 시 자동으로 포맷팅(ESLint Fix)를 수행하도록 설정
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit",
+    },
+    "editor.formatOnSave": false
+}

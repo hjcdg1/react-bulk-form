@@ -10,7 +10,7 @@ import type {
 } from '../types/common';
 import type { ShallowPartial } from '../types/utils';
 
-export function useForm<V extends FormValues, K extends FormRuleKey = never>(
+export function useForm<V extends FormValues<V>, K extends FormRuleKey = never>(
   options: UseFormOptions<V, K>
 ): UseFormReturn<V, K> {
   const [values, setValues] = useState<V>(options.defaultValues);
@@ -53,7 +53,7 @@ export function useForm<V extends FormValues, K extends FormRuleKey = never>(
           typeof valuesOrCallback === 'function' ? valuesOrCallback(prevValues) : valuesOrCallback
         ).reduce((acc, [key, value]) => {
           if (value !== undefined) {
-            acc[key as keyof V] = value;
+            acc[key as keyof V] = value as V[keyof V];
           }
           return acc;
         }, {} as ShallowPartial<V>);

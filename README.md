@@ -115,26 +115,26 @@ function Child() {
 ## Types
 
 ```ts
-type FormValues = Record<string, NonNullable<unknown> | null>;
+type FormValues<V> = { [K in keyof V]: undefined extends V[K] ? never : V[K] };
 
 type FormRuleKey = string;
 
-type FormRule<V extends FormValues> = (
+type FormRule<V extends FormValues<V>> = (
   values: V
 ) => { isValid: true } | { isValid: false; message?: string };
 
-type FormRules<V extends FormValues, K extends FormRuleKey> = ShallowPartial<
+type FormRules<V extends FormValues<V>, K extends FormRuleKey> = ShallowPartial<
   Record<K, FormRule<V>>
 >;
 
 type FormErrors<K extends FormRuleKey> = ShallowPartial<Record<K, string>>;
 
-type UseFormOptions<V extends FormValues, K extends FormRuleKey> = {
+type UseFormOptions<V extends FormValues<V>, K extends FormRuleKey> = {
   defaultValues: V;
   rules?: K extends never ? never : FormRules<V, K>;
 };
 
-type UseFormReturn<V extends FormValues, K extends FormRuleKey> = {
+type UseFormReturn<V extends FormValues<V>, K extends FormRuleKey> = {
   values: V;
   errors: FormErrors<K>;
   isValid: boolean;
@@ -145,19 +145,19 @@ type UseFormReturn<V extends FormValues, K extends FormRuleKey> = {
   reset: () => void;
 };
 
-type FormProviderProps<V extends FormValues, K extends FormRuleKey> = {
+type FormProviderProps<V extends FormValues<V>, K extends FormRuleKey> = {
   form: UseFormReturn<V, K>;
   children: ReactNode;
 };
 
-declare function useForm<V extends FormValues, K extends FormRuleKey = never>(
+declare function useForm<V extends FormValues<V>, K extends FormRuleKey = never>(
   options: UseFormOptions<V, K>
 ): UseFormReturn<V, K>
 
-declare function FormProvider<V extends FormValues, K extends FormRuleKey>(
+declare function FormProvider<V extends FormValues<V>, K extends FormRuleKey>(
   props: FormProviderProps<V, K>
 ): React.JSX.Element
 
-declare function useFormContext<V extends FormValues, K extends FormRuleKey = never>(
+declare function useFormContext<V extends FormValues<V>, K extends FormRuleKey = never>(
 ): UseFormReturn<V, K>
 ```

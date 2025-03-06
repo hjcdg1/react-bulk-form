@@ -3,7 +3,7 @@ import { FormContext } from '../providers/FormProvider';
 import type { FormValues, FormRuleKey, UseFormReturn } from '../types/common';
 
 export function useFormContext<
-  V extends FormValues,
+  V extends FormValues<V>,
   K extends FormRuleKey = never
 >(): UseFormReturn<V, K> {
   const context = useContext(FormContext);

@@ -3,7 +3,7 @@ import type { UseFormReturn, FormValues, FormRuleKey, FormProviderProps } from '
 
 export const FormContext = createContext<UseFormReturn<any, any> | null>(null);
 
-export function FormProvider<V extends FormValues, K extends FormRuleKey>({
+export function FormProvider<V extends FormValues<V>, K extends FormRuleKey>({
   form,
   children
 }: FormProviderProps<V, K>) {

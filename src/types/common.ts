@@ -23,11 +23,11 @@ export type UseFormOptions<V extends FormValues<V>, K extends FormRuleKey> = {
 export type UseFormReturn<V extends FormValues<V>, K extends FormRuleKey> = {
   values: V;
   errors: FormErrors<K>;
-  isValid: boolean;
-  isDirty: boolean;
+  flags: { isValid: boolean; isDirty: boolean };
   setValues: (valuesOrCallback: ShallowPartial<V> | ((prevValues: V) => ShallowPartial<V>)) => void;
-  addRule: (ruleKey: K, rule: FormRule<V>) => void;
-  triggerRule: (ruleKey: K, rule: FormRule<V>) => void;
+  setErrors: (
+    errorsOrCallback: FormErrors<K> | ((prevErrors: FormErrors<K>) => FormErrors<K>)
+  ) => void;
   reset: () => void;
 };
 

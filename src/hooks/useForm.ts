@@ -1,12 +1,12 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
+import { isEqual } from '../utils/isEqual';
 import type {
   FormValues,
   FormRuleKey,
   UseFormOptions,
   UseFormReturn,
   FormErrors,
-  FormRules,
-  FormRule
+  FormRules
 } from '../types/common';
 import type { ShallowPartial } from '../types/utils';
 
@@ -15,17 +15,12 @@ export function useForm<V extends FormValues<V>, K extends FormRuleKey = never>(
 ): UseFormReturn<V, K> {
   const [values, setValues] = useState<V>(options.defaultValues);
   const [errors, setErrors] = useState<FormErrors<K>>({});
-  const [rules, setRules] = useState<FormRules<V, K> | undefined>(options.rules);
 
-  // Keep the initial values passed as props in the first render.
-  const [firstDefaultValues] = useState<V>(options.defaultValues);
-  const [firstRules] = useState<FormRules<V, K> | undefined>(options.rules);
+  const [defaultValues, setDefaultValues] = useState<V>(options.defaultValues);
+  const [rules] = useState<FormRules<V, K> | undefined>(options.rules);
 
   const isValid = useMemo(() => Object.keys(errors).length === 0, [errors]);
-  const isDirty = useMemo(
-    () => JSON.stringify(values) !== JSON.stringify(firstDefaultValues),
-    [values, firstDefaultValues]
-  );
+  const isDirty = useMemo(() => !isEqual(values, defaultValues), [values, defaultValues]);
 
   // Validate the form values when the values or the rules change.
   useEffect(() => {
@@ -49,7 +44,7 @@ export function useForm<V extends FormValues<V>, K extends FormRuleKey = never>(
   const setPartialValues = useCallback(
     (valuesOrCallback: ShallowPartial<V> | ((prevValues: V) => ShallowPartial<V>)) => {
       setValues((prevValues) => {
-        const partialNewValues = Object.entries(
+        const newPartialValues = Object.entries(
           typeof valuesOrCallback === 'function' ? valuesOrCallback(prevValues) : valuesOrCallback
         ).reduce((acc, [key, value]) => {
           if (value !== undefined) {
@@ -60,7 +55,7 @@ export function useForm<V extends FormValues<V>, K extends FormRuleKey = never>(
 
         const newValues = {
           ...prevValues,
-          ...partialNewValues
+          ...newPartialValues
         } as V;
 
         return newValues;
@@ -69,39 +64,42 @@ export function useForm<V extends FormValues<V>, K extends FormRuleKey = never>(
     []
   );
 
-  const addRule = useCallback((ruleKey: K, rule: FormRule<V>) => {
-    setRules((prevRules) => ({ ...prevRules, [ruleKey]: rule }) as FormRules<V, K>);
-  }, []);
+  const setPartialErrors = useCallback(
+    (errorsOrCallback: FormErrors<K> | ((prevErrors: FormErrors<K>) => FormErrors<K>)) => {
+      setErrors((prevErrors) => {
+        const newPartialErrors =
+          typeof errorsOrCallback === 'function' ? errorsOrCallback(prevErrors) : errorsOrCallback;
 
-  const triggerRule = useCallback((ruleKey: K, rule: FormRule<V>) => {
-    setErrors((prevErrors) => {
-      const result = rule(values);
-      return result.isValid
-        ? prevErrors
-        : {
-            ...prevErrors,
-            [ruleKey]: result.message || `Validation by \`${ruleKey}\` rule failed`
-          };
-    });
-  }, []);
+        const newErrors = {
+          ...prevErrors,
+          ...newPartialErrors
+        };
+
+        return newErrors;
+      });
+    },
+    []
+  );
 
   const reset = useCallback(() => {
-    setValues(firstDefaultValues);
+    setValues(defaultValues);
     setErrors({});
-    setRules(firstRules);
-  }, [firstDefaultValues, firstRules]);
+  }, [defaultValues]);
+
+  const commit = useCallback(() => {
+    setDefaultValues(values);
+  }, [values]);
 
   return useMemo(
     () => ({
       values,
       errors,
-      isValid,
-      isDirty,
+      flags: { isValid, isDirty },
       setValues: setPartialValues,
-      addRule,
-      triggerRule,
-      reset
+      setErrors: setPartialErrors,
+      reset,
+      commit
     }),
-    [values, errors, isValid, isDirty, setPartialValues, addRule, triggerRule, reset]
+    [values, errors, isValid, isDirty, setPartialValues, setPartialErrors, reset, commit]
   );
 }

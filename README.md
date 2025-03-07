@@ -18,14 +18,20 @@ $ yarn add react-bulk-form
 You should define the following two types to use this package.
 
 ```ts
-// Define the type of the form values, where each property should not be undefined.
+/**
+ * Define the type of the form values.
+ * Each property should not be undefined.
+ */
 type PostFormValues = {
   title: string;
   content: string;
 }
 
-// Define the type representing the keys of the form validation rules to use.
-// If you don't use the validation rules, you don't need to define this type.
+/**
+ * Define the type representing the keys of the form validation rules to use.
+ * If you don't use the validation rules, you don't need to define this type.
+ * These keys don't need to match the field names, for better flexibility.
+ */
 type PostFormRuleKey = 'title' | 'content';
 ```
 
@@ -35,38 +41,73 @@ type PostFormRuleKey = 'title' | 'content';
 import { useForm } from 'react-bulk-form';
 
 const {
-  // The values of the form.
+  /**
+   * The values of the form.
+   * The type of this object is the `PostFormValues` type.
+   */
   values,
 
-  // The errors of the form.
+  /**
+   * The errors of the form.
+   * Each property name matches the `PostFormRuleKey` type, and its value is the error message.
+   */
   errors,
 
-  // Whether the form is valid. (Whether the values of the form are valid, based on the validation rules.)
-  isValid,
+  /**
+   * The flags representing the status of the form.
+   */
+  flags: {
+    /**
+     * Whether the values of the form are valid, based on the validation rules.
+     * It equals to `Object.keys(errors).length === 0`.
+     */
+    isValid,
 
-  // Whether the form is dirty. (Whether the values of the form have been changed from the default values.)
-  isDirty,
+    /**
+     * Whether the values of the form have been changed from the default values.
+     * It is based on deep comparison between the two objects.
+     */
+    isDirty,
+  },
 
-  // Set the values of the form. (It supports partial updates.)
+  /**
+   * Set the values of the form. (It supports partial updates.)
+   */
   setValues,
 
-  // Add a validation rule to the form.
-  addRule,
+  /**
+   * Set the errors of the form manually. (It supports partial updates.)
+   * Those temporary errors will be cleared when the values or the validation rules of the form are changed.
+   * It is recommended to use this only when you need to perform heavy validation(e.g., async API calls)
+   * for one-time validation(e.g., in submit handler). For other cases, don't use this.
+   */
+  setErrors,
 
-  // Trigger a validation rule of the form manually, leading to a temporary error.
-  // This error will be cleared when the values or the validation rules of the form are changed.
-  triggerRule,
-
-  // Reset the values and the validation rules of the form to the default values, and clear the errors.
+  /**
+   * Reset the values and the validation rules of the form to the default values, and clear the errors.
+   */
   reset,
+
+  /**
+   * Commit the values of the form to the default values. (`flags.isDirty` will be set to `false`.)
+   * It is recommended to commit the valid values, otherwise `flags.isValid` will be set to `false`.
+   * In general, it is used after submitting the form, for refreshing the default values.
+   */
+  commit,
 } = useForm<PostFormValues, PostFormRuleKey>({
-  // Set default values of the form. (It should follow `PostFormValues` type.)
+  /**
+   * Set default values of the form.
+   * The type of this object should follow the `PostFormValues` type.
+   */
   defaultValues: {
     title: '',
     content: '',
   },
 
-  // Set validation rules for the form. (It should follow `PostFormRuleKey` type.)
+  /**
+   * Set validation rules for the form.
+   * The type of each property in this object should follow the `PostFormRuleKey` type.
+   */
   rules: {
     title: (values) => {
       if (values.title.length < 5) {
@@ -137,12 +178,13 @@ type UseFormOptions<V extends FormValues<V>, K extends FormRuleKey> = {
 type UseFormReturn<V extends FormValues<V>, K extends FormRuleKey> = {
   values: V;
   errors: FormErrors<K>;
-  isValid: boolean;
-  isDirty: boolean;
+  flags: { isValid: boolean; isDirty: boolean };
   setValues: (valuesOrCallback: ShallowPartial<V> | ((prevValues: V) => ShallowPartial<V>)) => void;
-  addRule: (ruleKey: K, rule: FormRule<V>) => void;
-  triggerRule: (ruleKey: K, rule: FormRule<V>) => void;
+  setErrors: (
+    errorsOrCallback: FormErrors<K> | ((prevErrors: FormErrors<K>) => FormErrors<K>)
+  ) => void;
   reset: () => void;
+  commit: () => void;
 };
 
 type FormProviderProps<V extends FormValues<V>, K extends FormRuleKey> = {

@@ -3,7 +3,12 @@
   "version": "1.0.8-9",
   "author": "Choi Deok Gyeong (CDG)",
   "description": "A simple React library for managing form-related states in bulk.",
-  "keywords": ["cdg", "react", "bulk", "form"],
+  "keywords": [
+    "cdg",
+    "react",
+    "bulk",
+    "form"
+  ],
   "license": "ISC",
   "repository": {
     "type": "git",
@@ -12,8 +17,10 @@
   "publishConfig": {
     "access": "public"
   },
-
-  "files": ["src", "dist"],
+  "files": [
+    "src",
+    "dist"
+  ],
   "types": "./dist/index.d.ts",
   "module": "./dist/index.mjs",
   "main": "./dist/index.cjs",
@@ -24,7 +31,6 @@
       "require": "./dist/index.cjs"
     }
   },
-
   "scripts": {
     "build:types": "tsc",
     "build:runtime": "node ./esbuild.mjs",
@@ -54,5 +60,8 @@
   },
   "peerDependencies": {
     "react": ">= 18.0.0"
+  },
+  "dependencies": {
+    "react-hook-form": "^7.54.2"
   }
 }

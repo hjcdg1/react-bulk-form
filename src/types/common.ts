@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import type { Control, UseFormReturn as RHFUseFormReturn } from 'react-hook-form';
 import type { ShallowPartial } from './utils';
 
 export type FormValues<V> = { [K in keyof V]: undefined extends V[K] ? never : V[K] };
@@ -25,6 +26,8 @@ export type UseFormReturn<V extends FormValues<V>, K extends FormRuleKey> = {
   errors: FormErrors<K>;
   isValid: boolean;
   isDirty: boolean;
+  control: Control<V>;
+  methods: RHFUseFormReturn<V>;
   setValues: (valuesOrCallback: ShallowPartial<V> | ((prevValues: V) => ShallowPartial<V>)) => void;
   addRule: (ruleKey: K, rule: FormRule<V>) => void;
   triggerRule: (ruleKey: K, rule: FormRule<V>) => void;

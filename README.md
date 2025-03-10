@@ -106,7 +106,7 @@ const {
 
   /**
    * Set validation rules for the form.
-   * The type of each property in this object should follow the `PostFormRuleKey` type.
+   * The name of each property in this object should follow the `PostFormRuleKey` type.
    */
   rules: {
     title: (values) => {
@@ -151,55 +151,4 @@ function Child() {
   } = useFormContext<PostFormValues, PostFormRuleKey>();
   ...
 }
-```
-
-## Types
-
-```ts
-type FormValues<V> = { [K in keyof V]: undefined extends V[K] ? never : V[K] };
-
-type FormRuleKey = string;
-
-type FormRule<V extends FormValues<V>> = (
-  values: V
-) => { isValid: true } | { isValid: false; message?: string };
-
-type FormRules<V extends FormValues<V>, K extends FormRuleKey> = ShallowPartial<
-  Record<K, FormRule<V>>
->;
-
-type FormErrors<K extends FormRuleKey> = ShallowPartial<Record<K, string>>;
-
-type UseFormOptions<V extends FormValues<V>, K extends FormRuleKey> = {
-  defaultValues: V;
-  rules?: K extends never ? never : FormRules<V, K>;
-};
-
-type UseFormReturn<V extends FormValues<V>, K extends FormRuleKey> = {
-  values: V;
-  errors: FormErrors<K>;
-  flags: { isValid: boolean; isDirty: boolean };
-  setValues: (valuesOrCallback: ShallowPartial<V> | ((prevValues: V) => ShallowPartial<V>)) => void;
-  setErrors: (
-    errorsOrCallback: FormErrors<K> | ((prevErrors: FormErrors<K>) => FormErrors<K>)
-  ) => void;
-  reset: () => void;
-  commit: () => void;
-};
-
-type FormProviderProps<V extends FormValues<V>, K extends FormRuleKey> = {
-  form: UseFormReturn<V, K>;
-  children: ReactNode;
-};
-
-declare function useForm<V extends FormValues<V>, K extends FormRuleKey = never>(
-  options: UseFormOptions<V, K>
-): UseFormReturn<V, K>
-
-declare function FormProvider<V extends FormValues<V>, K extends FormRuleKey>(
-  props: FormProviderProps<V, K>
-): React.JSX.Element
-
-declare function useFormContext<V extends FormValues<V>, K extends FormRuleKey = never>(
-): UseFormReturn<V, K>
 ```

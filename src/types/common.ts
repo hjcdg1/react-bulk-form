@@ -29,6 +29,7 @@ export type UseFormReturn<V extends FormValues<V>, K extends FormRuleKey> = {
     errorsOrCallback: FormErrors<K> | ((prevErrors: FormErrors<K>) => FormErrors<K>)
   ) => void;
   reset: () => void;
+  commit: () => void;
 };
 
 export type FormProviderProps<V extends FormValues<V>, K extends FormRuleKey> = {

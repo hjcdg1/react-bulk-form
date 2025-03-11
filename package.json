@@ -1,6 +1,6 @@
 {
   "name": "react-bulk-form",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "author": "Choi Deok Gyeong (CDG)",
   "description": "A simple React library for managing form-related states in bulk.",
   "keywords": ["cdg", "react", "bulk", "form"],

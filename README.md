@@ -19,8 +19,8 @@ You should define the following two types to use this package.
 
 ```ts
 /**
- * Define the type of the form values.
- * Each property should not be undefined.
+ * Define the type of the form values, which should be object type.
+ * Each property should not be `undefined`.
  */
 type PostFormValues = {
   title: string;
@@ -32,7 +32,7 @@ type PostFormValues = {
  * If you don't use the validation rules, you don't need to define this type.
  * These keys don't need to match the field names, for better flexibility.
  */
-type PostFormRuleKey = 'title' | 'content';
+type PostFormRuleKey = 'titleMinLengthCheck' | 'titleMaxLengthCheck' | 'contentMinLengthCheck';
 ```
 
 #### useForm
@@ -44,12 +44,17 @@ const {
   /**
    * The values of the form.
    * The type of this object is the `PostFormValues` type.
+   *
+   * Example: `{ title: 'current title', content: 'current content' }`
    */
   values,
 
   /**
    * The errors of the form.
-   * Each property name matches the `PostFormRuleKey` type, and its value is the error message.
+   * The type of each property name is `string` type, for considering the errors set by `setErrors`,
+   * but it supports auto-completion for properties corresponding to the `PostFormRuleKey` type.
+   *
+   * Example: `{ titleMinLengthCheck: true }`
    */
   errors,
 
@@ -72,14 +77,18 @@ const {
 
   /**
    * Set the values of the form. (It supports partial updates.)
+   *
+   * Example: `setValues({ title: 'new title' })`
    */
   setValues,
 
   /**
    * Set the errors of the form manually. (It supports partial updates.)
-   * Those temporary errors will be cleared when the values or the validation rules of the form are changed.
+   * Those errors will be cleared when the values or the validation rules of the form are changed.
    * It is recommended to use this only when you need to perform heavy validation(e.g., async API calls)
    * for one-time validation(e.g., in submit handler). For other cases, don't use this.
+   *
+   * Example: `setErrors({ titleDuplicationCheck: true })`
    */
   setErrors,
 
@@ -90,14 +99,13 @@ const {
 
   /**
    * Commit the values of the form to the default values. (`flags.isDirty` will be set to `false`.)
-   * It is recommended to commit the valid values, otherwise `flags.isValid` will be set to `false`.
-   * In general, it is used after submitting the form, for refreshing the default values.
+   * In general, it is used right after submitting the form, for refreshing the default values.
    */
   commit,
 } = useForm<PostFormValues, PostFormRuleKey>({
   /**
    * Set default values of the form.
-   * The type of this object should follow the `PostFormValues` type.
+   * The type of this object should be the `PostFormValues` type.
    */
   defaultValues: {
     title: '',
@@ -106,21 +114,12 @@ const {
 
   /**
    * Set validation rules for the form.
-   * The name of each property in this object should follow the `PostFormRuleKey` type.
+   * The type of each property name should be the `PostFormRuleKey` type.
    */
   rules: {
-    title: (values) => {
-      if (values.title.length < 5) {
-        return { isValid: false, message: 'Title must be at least 5 characters long.' };
-      }
-      return { isValid: true };
-    },
-    content: (values) => {
-      if (values.content.length < 10) {
-        return { isValid: false, message: 'Content must be at least 10 characters long.' };
-      }
-      return { isValid: true };
-    },
+    titleMinLengthCheck: (values) => values.title.length >= 4,
+    titleMaxLengthCheck: (values) => values.title.length <= 128,
+    contentMinLengthCheck: (values) => values.content.length >= 16,
   },
 });
 ```

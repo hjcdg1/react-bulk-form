@@ -2,6 +2,12 @@
 
 A simple React library for managing form-related states in bulk.
 
+## Mental Model
+
+It manages form field values and errors(i.e., validation results based on statically declared rules, for colocation) in bulk, and tracks form-level or field-level status.
+
+How to implement the UX of forms based on these states is not a concern of this package, and therefore it minimizes secondary interfaces.
+
 ## Install
 
 ```bash

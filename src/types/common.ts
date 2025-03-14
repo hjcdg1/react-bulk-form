@@ -19,6 +19,8 @@ export type UseFormOptions<V extends FormValues<V>, R extends FormRuleKey> = {
 export type UseFormReturn<V extends FormValues<V>, R extends FormRuleKey> = {
   values: V;
   errors: FormErrors<R>;
+  dirtyFields: { [K in keyof V]?: true };
+  touchedFields: { [K in keyof V]?: true };
   flags: {
     isValid: boolean;
     isDirty: boolean;

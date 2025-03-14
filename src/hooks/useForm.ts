@@ -20,8 +20,25 @@ export function useForm<V extends FormValues<V>, R extends FormRuleKey = never>(
     (options as { rules: FormRules<V, R> | undefined }).rules
   );
 
+  const dirtyFields = useMemo(
+    () =>
+      Object.keys(values).reduce(
+        (acc, _key) => {
+          const key = _key as keyof V;
+          if (!isEqual(values[key], defaultValues[key])) {
+            acc[key] = true;
+          }
+          return acc;
+        },
+        {} as { [P in keyof V]?: true }
+      ),
+    [values, defaultValues]
+  );
+
+  const [touchedFields, setTouchedFields] = useState<{ [P in keyof V]?: true }>({});
+
   const isValid = useMemo(() => Object.keys(errors).length === 0, [errors]);
-  const isDirty = useMemo(() => !isEqual(values, defaultValues), [values, defaultValues]);
+  const isDirty = useMemo(() => Object.keys(dirtyFields).length > 0, [dirtyFields]);
 
   // Validate the form values when the values or the rules change.
   useEffect(() => {
@@ -51,6 +68,7 @@ export function useForm<V extends FormValues<V>, R extends FormRuleKey = never>(
           const value = _value as V[typeof key];
           if (value !== undefined) {
             acc[key] = value;
+            setTouchedFields((prevTouchedFields) => ({ ...prevTouchedFields, [key]: true }));
           }
           return acc;
         }, {} as Partial<V>);
@@ -102,6 +120,8 @@ export function useForm<V extends FormValues<V>, R extends FormRuleKey = never>(
     () => ({
       values,
       errors,
+      dirtyFields,
+      touchedFields,
       flags: { isValid, isDirty },
       setValues: setPartialValues,
       setErrors: setPartialErrors,

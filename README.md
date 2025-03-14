@@ -59,6 +59,22 @@ const {
   errors,
 
   /**
+   * The fields whose values differ from their default values.
+   * The type of each property name is the `keyof PostFormValues` type.
+   *
+   * Example: `{ title: true }`
+   */
+  dirtyFields,
+
+  /**
+   * The fields whose values have been changed. (Regardless of matching their default value.)
+   * The type of each property name is the `keyof PostFormValues` type.
+   *
+   * Example: `{ title: true }`
+   */
+  touchedFields,
+
+  /**
    * The flags representing the status of the form.
    */
   flags: {
@@ -69,8 +85,8 @@ const {
     isValid,
 
     /**
-     * Whether the values of the form have been changed from the default values.
-     * It is based on deep comparison between the two objects.
+     * Whether the values of the form are different from the default values.
+     * It equals to `Object.keys(dirtyFields).length > 0`.
      */
     isDirty,
   },
